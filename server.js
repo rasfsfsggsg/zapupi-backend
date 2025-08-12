@@ -2,13 +2,16 @@ import express from "express";
 import fetch from "node-fetch";
 
 const app = express();
+
+// Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-const TOKEN_KEY = process.env.TOKEN_KEY;
-const SECRET_KEY = process.env.SECRET_KEY;
+// Environment variables
+const TOKEN_KEY = process.env.TOKEN_KEY || "your_token_here";
+const SECRET_KEY = process.env.SECRET_KEY || "your_secret_here";
 
-// Create Order Route
+// Create Order API
 app.post("/create-order", async (req, res) => {
   try {
     const body = new URLSearchParams({
@@ -28,13 +31,13 @@ app.post("/create-order", async (req, res) => {
     });
 
     const data = await r.json();
-    res.json(data);
+    return res.json(data);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   }
 });
 
-// Order Status Route
+// Order Status API
 app.post("/order-status", async (req, res) => {
   try {
     const body = new URLSearchParams({
@@ -50,12 +53,19 @@ app.post("/order-status", async (req, res) => {
     });
 
     const data = await r.json();
-    res.json(data);
+    return res.json(data);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   }
+});
+
+// Root test route
+app.get("/", (req, res) => {
+  res.send("Server is running ✅");
 });
 
 // Start server (only once)
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
